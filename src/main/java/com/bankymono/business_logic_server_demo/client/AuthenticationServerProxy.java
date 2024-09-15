@@ -1,6 +1,9 @@
 package com.bankymono.business_logic_server_demo.client;
 
 import com.bankymono.business_logic_server_demo.model.User;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
+@Slf4j
 public class AuthenticationServerProxy {
     @Autowired
     private RestTemplate rest;
@@ -40,6 +44,8 @@ public class AuthenticationServerProxy {
         var request = new HttpEntity<>(body);
 
         var response = rest.postForEntity(url, request, Void.class);
+
+        log.info("response - {}", response.toString());
 
         return response
              .getStatusCode()

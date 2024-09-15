@@ -2,12 +2,16 @@ package com.bankymono.business_logic_server_demo.service;
 
 import com.bankymono.business_logic_server_demo.model.OtpAuthentication;
 import com.bankymono.business_logic_server_demo.model.UsernamePasswordAuthentication;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
@@ -19,6 +23,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+@Component
+@Slf4j
 public class InitialAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -36,6 +42,8 @@ public class InitialAuthenticationFilter extends OncePerRequestFilter {
         if (code == null) {
             Authentication a =
                     new UsernamePasswordAuthentication(username, password);
+            SecretKey signature = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+            log.info(new ObjectMapper().writeValueAsString(signature.getEncoded()));
             manager.authenticate(a);
         } else {
             Authentication a =
